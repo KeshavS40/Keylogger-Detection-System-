@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Login System</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            color: white;
+        }
+
+        .container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 20px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #00c9ff;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #92fe9d;
+            color: black;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .bar {
+            height: 8px;
+            background: #ddd;
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .fill {
+            height: 100%;
+            width: 0%;
+        }
+
+        .weak { background: red; width: 33%; }
+        .medium { background: orange; width: 66%; }
+        .strong { background: limegreen; width: 100%; }
+
+        .alert {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🔐 Secure Login</h2>
+
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password" oninput="checkStrength()">
+
+    <div class="bar">
+        <div id="strengthBar" class="fill"></div>
+    </div>
+
+    <button onclick="login()">Login</button>
+
+    <p id="message"></p>
+    <p id="alert" class="alert"></p>
+</div>
+
+<script>
+let attempts = 0;
+
+// Fake stored hashed password (simulation)
+let storedHash = btoa("Secure@123"); 
+
+function hashPassword(password) {
+    return btoa(password); // Base64 (simulated hashing)
+}
+
+function checkStrength() {
+    let password = document.getElementById("password").value;
+    let score = 0;
+
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[\W]/.test(password)) score++;
+
+    let bar = document.getElementById("strengthBar");
+    bar.className = "fill";
+
+    if (score <= 2) bar.classList.add("weak");
+    else if (score <= 4) bar.classList.add("medium");
+    else bar.classList.add("strong");
+}
+
+function login() {
+    let password = document.getElementById("password").value;
+    let message = document.getElementById("message");
+    let alertBox = document.getElementById("alert");
+
+    let hashed = hashPassword(password);
+
+    if (hashed === storedHash) {
+        message.innerText = "✅ Login Successful";
+        message.style.color = "lightgreen";
+        attempts = 0;
+        alertBox.innerText = "";
+    } else {
+        attempts++;
+        message.innerText = "❌ Wrong Password";
+        message.style.color = "red";
+
+        if (attempts >= 3) {
+            alertBox.innerText = "🚨 Brute Force Attack Detected!";
+        }
+    }
+}
+</script>
+
+</body>
+</html>
